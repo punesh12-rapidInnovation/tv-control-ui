@@ -34,43 +34,43 @@ class AppRoutes {
     switch (settings.name) {
       case home:
         return MaterialPageRoute(
-          builder: (_) => wrap(const HomePage()),
+          builder: (_) => wrap( HomePage()),
           settings: settings,
         );
       case library:
         return MaterialPageRoute(
-          builder: (_) => wrap(const LibraryPage()),
+          builder: (_) => wrap( LibraryPage()),
           settings: settings,
         );
       case login:
         return MaterialPageRoute(
-          builder: (_) => wrap(const LoginPage()),
+          builder: (_) => wrap( LoginPage()),
           settings: settings,
         );
       case search:
         return MaterialPageRoute(
-          builder: (_) => wrap(const SearchPage()),
+          builder: (_) => wrap( SearchPage()),
           settings: settings,
         );
       case account:
         return MaterialPageRoute(
-          builder: (_) => wrap(const HomePage()), // Temporary, replace with AccountPage when created
+          builder: (_) => wrap( HomePage()), // Temporary, replace with AccountPage when created
           settings: settings,
         );
       case following:
         return MaterialPageRoute(
-          builder: (_) => wrap(const HomePage()), // Temporary, replace with FollowingPage when created
+          builder: (_) => wrap( HomePage()), // Temporary, replace with FollowingPage when created
           settings: settings,
         );
       case friends:
         return MaterialPageRoute(
-          builder: (_) => wrap(const HomePage()), // Temporary, replace with FriendsPage when created
+          builder: (_) => wrap( HomePage()), // Temporary, replace with FriendsPage when created
           settings: settings,
         );
       case gameInterstitial:
         return MaterialPageRoute(
           builder: (_) => wrap(
-            const HomePage(), // Replace with GameInterstitialPage when created
+             HomePage(), // Replace with GameInterstitialPage when created
             layoutType: LayoutType.fullScreen,
           ),
           settings: settings,

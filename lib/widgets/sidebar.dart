@@ -21,6 +21,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
   String _currentMenuItem = '';
   late AnimationController _expandController;
   late Animation<double> _expandAnimation;
+  final FocusNode _sidebarFocusNode = FocusNode();
 
   final List<Map<String, dynamic>> _items = [
     {
@@ -92,6 +93,15 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
         }
       });
     }
+
+    // Add listener to sidebar focus node
+    _sidebarFocusNode.addListener(_handleSidebarFocusChange);
+  }
+
+  void _handleSidebarFocusChange() {
+    if (!_sidebarFocusNode.hasFocus && !_focusNodes.any((node) => node.hasFocus)) {
+      _collapseSidebar();
+    }
   }
 
   void _expandSidebar() {
@@ -121,6 +131,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _expandController.dispose();
+    _sidebarFocusNode.dispose();
     for (var node in _focusNodes) {
       node.dispose();
     }
@@ -148,40 +159,48 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) {
-        if (!_isExpanded) {
-          _expandSidebar();
-        }
-      },
-      onExit: (_) {
-        if (_isExpanded && !_focusNodes.any((node) => node.hasFocus)) {
+    return Focus(
+      focusNode: _sidebarFocusNode,
+      onFocusChange: (hasFocus) {
+        if (!hasFocus && !_focusNodes.any((node) => node.hasFocus)) {
           _collapseSidebar();
         }
       },
-      child: AnimatedBuilder(
-        animation: _expandAnimation,
-        builder: (context, child) {
-          final width = 60.0 + (140.0 * _expandAnimation.value); // Animate from 60 to 200
-          return SizedBox(
-            width: width,
-            child: FocusTraversalGroup(
-              child: Column(
-                children: List.generate(_items.length, (index) {
-                  final item = _items[index];
-                  return SidebarItem(
-                    icon: item['icon'] as IconData,
-                    label: item['title'] as String,
-                    focusNode: _focusNodes[index],
-                    onSelect: () => _handleItemSelection(item),
-                    isSelected: _currentMenuItem == item['title'],
-                    isExpanded: _isExpanded,
-                  );
-                }),
-              ),
-            ),
-          );
+      child: MouseRegion(
+        onEnter: (_) {
+          if (!_isExpanded) {
+            _expandSidebar();
+          }
         },
+        onExit: (_) {
+          if (_isExpanded && !_focusNodes.any((node) => node.hasFocus)) {
+            _collapseSidebar();
+          }
+        },
+        child: AnimatedBuilder(
+          animation: _expandAnimation,
+          builder: (context, child) {
+            final width = 60.0 + (140.0 * _expandAnimation.value); // Animate from 60 to 200
+            return SizedBox(
+              width: width,
+              child: FocusTraversalGroup(
+                child: Column(
+                  children: List.generate(_items.length, (index) {
+                    final item = _items[index];
+                    return SidebarItem(
+                      icon: item['icon'] as IconData,
+                      label: item['title'] as String,
+                      focusNode: _focusNodes[index],
+                      onSelect: () => _handleItemSelection(item),
+                      isSelected: _currentMenuItem == item['title'],
+                      isExpanded: _isExpanded,
+                    );
+                  }),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
