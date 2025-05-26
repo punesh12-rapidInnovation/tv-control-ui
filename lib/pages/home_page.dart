@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tv_control_ui/widgets/image/image_thumbnail.dart';
 import '../widgets/content_card_row.dart';
+import '../widgets/hero_banner.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -104,7 +105,15 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
+            HeroBanner(
+              imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80',
+              title: 'Featured Content',
+              subtitle: 'Watch the latest and greatest content',
+              autofocus: true,
+              onTap: () {
+                // Handle hero banner tap
+              },
+            ),
             ContentCardRow(
               title: 'Trending Now',
               handleApiCall: (page) async {
@@ -121,9 +130,7 @@ class HomePage extends StatelessWidget {
             ContentCardRow(
               title: 'Recommended for You',
               handleApiCall: (page) async {
-                // Simulate an API call delay
                 await Future.delayed(const Duration(milliseconds: 100));
-                // Return a Paginated object as expected by ContentCardRow
                 return Paginated<Map<String, dynamic>>(
                   count: recommendedItems.length,
                   data: recommendedItems.cast<Map<String, dynamic>>().toList(),
@@ -138,7 +145,7 @@ class HomePage extends StatelessWidget {
               handleApiCall: (page) async {
                 await Future.delayed(const Duration(milliseconds: 100));
                 return Paginated<Map<String, dynamic>>(
-                  count: recommendedItems.length,
+                  count: continueWatchingItems.length,
                   data: continueWatchingItems.cast<Map<String, dynamic>>().toList(),
                 );
               },

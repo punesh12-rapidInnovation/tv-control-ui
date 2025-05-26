@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'focusable_wrapper.dart';
 
 class Paginated<T> {
   final int count;
@@ -16,7 +17,7 @@ class ContentCardRow extends StatefulWidget {
   const ContentCardRow({
     super.key,
     required this.title,
-    required this.handleApiCall,
+    this.handleApiCall,
     this.cardsPerView = 4,
     this.horizontalGap = 16.0,
     this.cardBuilder,
@@ -30,9 +31,8 @@ class _ContentCardRowState extends State<ContentCardRow> {
   final ScrollController _scrollController = ScrollController();
   final List<FocusNode> _focusNodes = [];
   final GlobalKey _titleKey = GlobalKey();
-  static const double _scrollPadding = 30.0;
 
-  List<Map<String, dynamic>> _allItems = [];
+  final List<Map<String, dynamic>> _allItems = [];
   bool _isLoading = false;
   int _currentPage = 1;
   bool _hasMoreData = true;
@@ -54,8 +54,7 @@ class _ContentCardRowState extends State<ContentCardRow> {
     try {
       if (widget.handleApiCall != null) {
         final paginated = await widget.handleApiCall!(_currentPage);
-
-        // Accept both Map and already-Map objects
+        
         final newItems = paginated.data.map<Map<String, dynamic>>((content) {
           if (content is Map<String, dynamic>) return content;
           if (content is dynamic && content.toJson != null) {
@@ -192,14 +191,14 @@ class _ContentCardRowState extends State<ContentCardRow> {
             height: 200,
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final availableWidth = constraints.maxWidth - (widget.horizontalGap * 2);
+                final screenWidth = MediaQuery.of(context).size.width;
+                final availableWidth = screenWidth - (widget.horizontalGap * 2);
                 final cardWidth = (availableWidth - (widget.horizontalGap * (widget.cardsPerView - 1))) / widget.cardsPerView;
 
-                // Always show the loader at the end, regardless of loading state or hasMoreData
                 return ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: widget.horizontalGap / 2),
+                  padding: EdgeInsets.symmetric(horizontal: widget.horizontalGap),
                   itemCount: _allItems.length + 1,
                   itemBuilder: (context, index) {
                     if (index == _allItems.length) {
@@ -212,30 +211,20 @@ class _ContentCardRowState extends State<ContentCardRow> {
                     }
 
                     final item = _allItems[index];
-                    return Focus(
-                      focusNode: _focusNodes.length > index ? _focusNodes[index] : null,
-                      onFocusChange: (hasFocus) {
-                        if (hasFocus) {
-                          _scrollToCard(index, cardWidth);
-                        }
-                      },
-                      child: Builder(
-                        builder: (context) {
-                          final isFocused = Focus.of(context).hasFocus;
-                          return Container(
-                            width: cardWidth,
-                            margin: EdgeInsets.symmetric(horizontal: widget.horizontalGap / 2),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: isFocused ? Colors.white : Colors.transparent,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: widget.cardBuilder?.call(context, item, cardWidth, index) ??
-                                _buildDefaultCard(context, item, cardWidth, index),
-                          );
+                    return Padding(
+                      padding: EdgeInsets.only(right: index < _allItems.length - 1 ? widget.horizontalGap : 0),
+                      child: FocusableWrapper(
+                        focusNode: _focusNodes.length > index ? _focusNodes[index] : null,
+                        onFocusChange: () {
+                          if (_focusNodes.length > index && _focusNodes[index].hasFocus) {
+                            _scrollToCard(index, cardWidth);
+                          }
                         },
+                        child: SizedBox(
+                          width: cardWidth,
+                          child: widget.cardBuilder?.call(context, item, cardWidth, index) ??
+                              _buildDefaultCard(context, item, cardWidth, index),
+                        ),
                       ),
                     );
                   },
