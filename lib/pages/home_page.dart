@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tv_control_ui/widgets/image/image_thumbnail.dart';
 import '../widgets/content_card_row.dart';
 import '../widgets/hero_banner.dart';
+import '../widgets/focusable_wrapper.dart';
+import '../widgets/event_card.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -100,6 +102,41 @@ class HomePage extends StatelessWidget {
       },
     ];
 
+    final savedEventsAndOffers = [
+      {
+        'title': 'Summer Sale',
+        'subtitle': 'Up to 50% off on selected items',
+        'imageUrl': 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=600&q=80',
+        'endDate': '2024-08-31',
+        'discount': '50%',
+        'friendsSaved': 6,
+      },
+      {
+        'title': 'Weekend Special',
+        'subtitle': 'Buy 1 Get 1 Free',
+        'imageUrl': 'https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=600&q=80',
+        'endDate': '2024-07-15',
+        'discount': 'B1G1',
+        'friendsSaved': 3,
+      },
+      {
+        'title': 'Flash Sale',
+        'subtitle': 'Limited time offer',
+        'imageUrl': 'https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=600&q=80',
+        'endDate': '2024-07-10',
+        'discount': '30%',
+        'friendsSaved': 8,
+      },
+      {
+        'title': 'Holiday Special',
+        'subtitle': 'Special holiday rates',
+        'imageUrl': 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=600&q=80',
+        'endDate': '2024-12-25',
+        'discount': '25%',
+        'friendsSaved': 4,
+      },
+    ];
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -125,6 +162,31 @@ class HomePage extends StatelessWidget {
               },
               cardBuilder: (context, item, width, index) {
                 return ImageThumbnail(imageUrl: item['imageUrl']);
+              },
+            ),
+            ContentCardRow(
+              title: 'Saved Events and Offers',
+              cardsPerView: 2,
+              handleApiCall: (page) async {
+                await Future.delayed(const Duration(milliseconds: 100));
+                return Paginated<Map<String, dynamic>>(
+                  count: savedEventsAndOffers.length,
+                  data: savedEventsAndOffers.cast<Map<String, dynamic>>().toList(),
+                );
+              },
+              cardBuilder: (context, item, width, index) {
+                return EventCard(
+                  imageUrl: item['imageUrl'],
+                  title: item['title'],
+                  subtitle: item['subtitle'],
+                  endDate: item['endDate'],
+                  discount: item['discount'],
+                  friendsSaved: item['friendsSaved'] ?? 0,
+                  onSavedTap: () {
+                    // Handle saved button tap
+                    debugPrint('Saved button tapped');
+                  },
+                );
               },
             ),
             ContentCardRow(

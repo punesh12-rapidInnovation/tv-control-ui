@@ -187,27 +187,31 @@ class _ContentCardRowState extends State<ContentCardRow> {
               ),
             ),
           ),
-          SizedBox(
-            height: 200,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final screenWidth = MediaQuery.of(context).size.width;
-                final availableWidth = screenWidth - (widget.horizontalGap * 2);
-                final cardWidth = (availableWidth - (widget.horizontalGap * (widget.cardsPerView - 1))) / widget.cardsPerView;
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = MediaQuery.of(context).size.width;
+              final availableWidth = screenWidth - (widget.horizontalGap * 2);
+              final cardWidth = (availableWidth - (widget.horizontalGap * (widget.cardsPerView - 1))) / widget.cardsPerView;
 
-                return ListView.builder(
+              return SizedBox(
+                height: 280, 
+                child: ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.symmetric(horizontal: widget.horizontalGap),
-                  itemCount: _allItems.length + 1,
+                  itemCount: _hasMoreData ? _allItems.length + 1 : _allItems.length,
                   itemBuilder: (context, index) {
-                    if (index == _allItems.length) {
+                    if (_hasMoreData && index == _allItems.length) {
                       return SizedBox(
                         width: cardWidth,
                         child: const Center(
                           child: CircularProgressIndicator(),
                         ),
                       );
+                    }
+
+                    if (index >= _allItems.length) {
+                      return SizedBox(width: cardWidth);
                     }
 
                     final item = _allItems[index];
@@ -228,9 +232,9 @@ class _ContentCardRowState extends State<ContentCardRow> {
                       ),
                     );
                   },
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),
