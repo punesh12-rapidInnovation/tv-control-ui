@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:tv_control_ui/routes/app_routes.dart';
 import '../widgets/sidebar.dart';
 import '../widgets/top_nav_bar.dart';
 
-class HomeScreen extends StatefulWidget {
+class Layout extends StatefulWidget {
   final Widget body;
   
-  const HomeScreen({
+  const Layout({
     super.key,
     required this.body,
   });
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<Layout> createState() => _LayoutState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _LayoutState extends State<Layout> {
   late final FocusNode _searchFocus;
   late final FocusNode _contentFocus;
   String _selectedMenuItem = 'Home';  // Default to Home
@@ -43,19 +44,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _getMenuItemFromRoute(String route) {
     switch (route) {
-      case '/':
+      case AppRoutes.home:
         return 'Home';
-      case '/library':
+      case AppRoutes.library:
         return 'Library';
-      case '/search':
+      case AppRoutes.search:
         return 'Search';
-      case '/account':
+      case AppRoutes.account:
         return 'Account';
-      case '/following':
+      case AppRoutes.following:
         return 'Following';
-      case '/friends':
+      case AppRoutes.friends:
         return 'Friends';
-      case '/sign-up':
+      case AppRoutes.login:
         return 'Login';
       default:
         return 'Home';

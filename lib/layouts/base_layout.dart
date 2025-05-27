@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import '../screens/home_screen.dart';
+import '../screens/layout.dart';
 
-enum LayoutType {
-  standard,
-  fullScreen,
-  minimal
-}
+enum LayoutType { standard, fullScreen, minimal }
 
 class BaseLayout extends StatelessWidget {
   final Widget child;
@@ -23,12 +19,10 @@ class BaseLayout extends StatelessWidget {
       case LayoutType.fullScreen:
         return child;
       case LayoutType.minimal:
-        return Scaffold(
-          body: child,
-        );
+        return Scaffold(body: child);
       case LayoutType.standard:
       default:
-        return HomeScreen(body: child);
+        return Layout(body: child);
     }
   }
-} 
+}
