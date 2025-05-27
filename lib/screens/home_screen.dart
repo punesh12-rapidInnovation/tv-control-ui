@@ -72,22 +72,31 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          TopNavBar(searchFocusNode: _searchFocus),
-          Expanded(
-            child: Row(
-              children: [
-                Sidebar(
-                  selectedMenuItem: _selectedMenuItem,
+      backgroundColor: Colors.black, // Overscan area color
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 1920),
+          child: Column(
+            children: [
+              TopNavBar(searchFocusNode: _searchFocus),
+              Expanded(
+                child: Row(
+                  children: [
+                    Sidebar(
+                      selectedMenuItem: _selectedMenuItem,
+                    ),
+                    Expanded(
+                      child: Container(
+                        color: Colors.black, // Content area background
+                        child: widget.body,
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: widget.body,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
